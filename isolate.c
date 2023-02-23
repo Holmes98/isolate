@@ -1,7 +1,7 @@
 /*
  *	A Process Isolator based on Linux Containers
  *
- *	(c) 2012-2022 Martin Mares <mj@ucw.cz>
+ *	(c) 2012-2023 Martin Mares <mj@ucw.cz>
  *	(c) 2012-2014 Bernard Blackham <bernard@blackham.com.au>
  */
 
@@ -783,16 +783,24 @@ self_name(void)
 }
 
 static void
+do_cleanup(void)
+{
+  rmtree(box_dir);
+  cg_remove();
+}
+
+static void
 init(void)
 {
-  msg("Preparing sandbox directory\n");
-  if (mkdir("box", 0700) < 0)
+  if (dir_exists("box"))
     {
-      if (errno == EEXIST)
-        die("Box already exists, run `%s --cleanup' first", self_name());
-      else
-        die("Cannot create box: %m");
+      msg("Deleting previous sandbox\n");
+      do_cleanup();
     }
+
+  msg("Preparing sandbox\n");
+  if (mkdir("box", 0700) < 0)
+    die("Cannot create box: %m");
   if (chown("box", orig_uid, orig_gid) < 0)
     die("Cannot chown box: %m");
 
@@ -805,15 +813,13 @@ init(void)
 static void
 cleanup(void)
 {
-  if (!dir_exists("box"))
+  if (dir_exists("box"))
     {
-      msg("Nothing to do -- box directory did not exist\n");
-      return;
+      msg("Deleting sandbox\n");
+      do_cleanup();
     }
-
-  msg("Deleting sandbox directory\n");
-  rmtree(box_dir);
-  cg_remove();
+  else
+    msg("Nothing to do -- box directory did not exist\n");
 }
 
 static void
