@@ -287,6 +287,12 @@ The following options can be useful in special cases.
 	changing the line discipline, and stuffing characters to the terminal's input queue
 	using the TIOCSTI ioctl. Use with extreme caution.
 
+*--as-uid=*'uid', *--as-gid=*'gid'::
+	Act on behalf of the specified user and group (only if Isolate was invoked by root).
+	This is used in scenarios where a root-controlled process manages creation of sandboxes
+	for regular users, usually in conjunction with the *restricted_init* option in
+	the configuration file.
+
 META-FILES
 ----------
 The meta-file contains miscellaneous meta-information on execution of the
