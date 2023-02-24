@@ -8,3 +8,6 @@
 - check that /proc/sys/core_pattern does not contain a pipe
 
 - reference the grader security paper
+
+- Daemon:
+	- quota option on init
