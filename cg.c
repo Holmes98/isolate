@@ -310,7 +310,7 @@ cg_remove(void)
 
   if (dir_exists(path))
     {
-      msg("Removing control group");
+      msg("Removing control group\n");
 
       cg_write("?cgroup.kill", "1\n");
 
